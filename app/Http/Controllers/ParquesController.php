@@ -12,21 +12,23 @@ class ParquesController extends Controller
     public function insert_park(Request $request)
     {
         $validator_parques = Validator::make($request->all(), [
-            'codigo_parques' => 'required',
             'nombre_parques' => 'required',
             'direccion_parques' => 'required',
             'telefono_parques' => 'required',
             'codigo_municipios' => 'required',
         ]);
 
+        $codigo_parques = "P00".Parques::get()->count();
+
         if (!$validator_parques->fails()) {
             $grupos_insert = Parques::insert([
-                'Codigo_Parques' => $request->codigo_parques,
+                'Codigo_Parques' => $codigo_parques,
                 'Nombre_Parques' => $request->nombre_parques,
                 'Direccion_Parques' => $request->direccion_parques,
                 'Telefono_Parques' => $request->telefono_parques,
                 'Codigo_Municipios' => $request->codigo_municipios
             ]);
+            DB::commit();
 
             if ($grupos_insert) {
                 return response()->json([
@@ -61,6 +63,7 @@ class ParquesController extends Controller
                         'Telefono_Parques' => $request->telefono_parques,
                         'Codigo_Municipios' => $request->codigo_municipios,
                     ]);
+                DB::commit();
                 if ($update_park) {
                     return response()->json([
                         'status' => true,
@@ -88,6 +91,7 @@ class ParquesController extends Controller
     {
         if ($this->validated_existence($codigo_parques)) {
             if (Parques::where('Codigo_Parques', $codigo_parques)->delete()) {
+                DB::commit();
                 #Devolvemos una respuesta satisfactoria
                 return response()->json([
                     'status' => true,
@@ -124,15 +128,28 @@ class ParquesController extends Controller
 
     private function get_park($codigo_parques)
     {
+        DB::commit();
         return Parques::where('Codigo_parques', '=', $codigo_parques)->first();
     }
 
     public function find_park()
     {
-        $usuarios = Parques::all();
+        DB::commit();
+        $parks = Parques::all();
         return response()->json([
             'status' => true,
-            'data' => $usuarios
+            'data' => $parks
         ]);
+    }
+
+    public function find_municipios(){
+        {
+            DB::commit();
+            $municipios = DB::table('municipios')->get();
+            return response()->json([
+                'status' => true,
+                'data' => $municipios
+            ]);
+        }
     }
 }

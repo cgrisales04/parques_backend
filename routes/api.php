@@ -19,3 +19,6 @@ Route::put('/parques/{codigo_parques}', [ParquesController::class, 'update_park'
 Route::delete('/parques/{codigo_parques}', [ParquesController::class, 'delete_park']);
 Route::get('/parques/{codigo_parques}', [ParquesController::class, 'find_one_park']);
 Route::get('/parques', [ParquesController::class, 'find_park']);
+
+
+Route::get('/municipios', [ParquesController::class, 'find_municipios']);
